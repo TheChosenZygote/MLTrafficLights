@@ -1,5 +1,5 @@
+/**
 #include <iostream>
-#include <vector>
 
 // GLEW
 #define GLEW_STATIC
@@ -25,14 +25,9 @@ const GLchar* fragmentShaderSource = "#version 330 core\n"
 "color = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
 "}\n\0";
 
-GLFWwindow *window;
-GLuint shaderProgram;
-uint size = 4;
-GLuint VBO[4], VAO[4];
-GLfloat objects[4][9];
-uint count = 0;
-
-int createWindow() {
+// The MAIN function, from here we start the application and run the game loop
+int main()
+{
     // Init GLFW
     glfwInit( );
     
@@ -45,7 +40,7 @@ int createWindow() {
     glfwWindowHint( GLFW_RESIZABLE, GL_FALSE );
     
     // Create a GLFWwindow object that we can use for GLFW's functions
-    window = glfwCreateWindow( WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr );
+    GLFWwindow *window = glfwCreateWindow( WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr );
     
     int screenWidth, screenHeight;
     glfwGetFramebufferSize( window, &screenWidth, &screenHeight );
@@ -72,10 +67,7 @@ int createWindow() {
     // Define the viewport dimensions
     glViewport( 0, 0, screenWidth, screenHeight );
     
-    return 0;
-}
-
-void setShader() {
+    
     // Build and compile our shader program
     // Vertex shader
     GLuint vertexShader = glCreateShader( GL_VERTEX_SHADER );
@@ -108,7 +100,7 @@ void setShader() {
     }
     
     // Link shaders
-    shaderProgram = glCreateProgram( );
+    GLuint shaderProgram = glCreateProgram( );
     glAttachShader( shaderProgram, vertexShader );
     glAttachShader( shaderProgram, fragmentShader );
     glLinkProgram( shaderProgram );
@@ -124,27 +116,7 @@ void setShader() {
     
     glDeleteShader( vertexShader );
     glDeleteShader( fragmentShader );
-}
-
-void createObject(GLfloat obj[]) {
-    glGenVertexArrays( 1, &VAO[count] );
-    glBindVertexArray( VAO[count] );
-    glGenBuffers( 1, &VBO[count] );
-    // Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
-    glBindBuffer( GL_ARRAY_BUFFER, VBO[count] );
-    glBufferData( GL_ARRAY_BUFFER, sizeof( &obj ), obj, GL_STATIC_DRAW );
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof( GLfloat ), ( GLvoid * ) 0 );
-    glEnableVertexAttribArray( 0 );
-    count++;
-}
-
-
-// The MAIN function, from here we start the application and run the game loop
-int main()
-{
-    if(createWindow() == -1)
-        return -1;
-    setShader();
+    
     
     // Set up vertex data (and buffer(s)) and attribute pointers
     GLfloat horizontalLane[] =
@@ -161,6 +133,25 @@ int main()
         1.0f,  0.3f, 0.0f
     };
     
+    GLuint horizontalLaneBO, horizontalLaneAO;
+    glGenVertexArrays( 1, &horizontalLaneAO );
+    glGenBuffers( 1, &horizontalLaneBO );
+    // Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
+    glBindVertexArray( horizontalLaneAO );
+    glBindBuffer( GL_ARRAY_BUFFER, horizontalLaneBO );
+    glBufferData( GL_ARRAY_BUFFER, sizeof( horizontalLane ), horizontalLane, GL_STATIC_DRAW );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof( GLfloat ), ( GLvoid * ) 0 );
+    glEnableVertexAttribArray( 0 );
+    
+    GLuint horizontalLane1BO, horizontalLane1AO;
+    glGenVertexArrays( 1, &horizontalLane1AO );
+    glGenBuffers( 1, &horizontalLane1BO );
+    glBindVertexArray( horizontalLane1AO );
+    glBindBuffer( GL_ARRAY_BUFFER, horizontalLane1BO );
+    glBufferData( GL_ARRAY_BUFFER, sizeof( horizontalLane1 ), horizontalLane1, GL_STATIC_DRAW );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof( GLfloat ), ( GLvoid * ) 0 );
+    glEnableVertexAttribArray( 0 );
+    
     GLfloat verticalLane[] =
     {
         -0.3f, -1.0f, 0.0f,
@@ -175,16 +166,24 @@ int main()
         -0.3f,  1.0f, 0.0f
     };
     
-    for(int i=0; i<9; i++) {
-        objects[0][i] = horizontalLane[i];
-        objects[1][i] = horizontalLane1[i];
-        objects[2][i] = verticalLane[i];
-        objects[3][i] = verticalLane1[i];
-    }
+    GLuint verticalLaneBO, verticalLaneAO;
+    glGenVertexArrays( 1, &verticalLaneAO );
+    glGenBuffers( 1, &verticalLaneBO );
+    // Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
+    glBindVertexArray( verticalLaneAO );
+    glBindBuffer( GL_ARRAY_BUFFER, verticalLaneBO );
+    glBufferData( GL_ARRAY_BUFFER, sizeof( verticalLane ), verticalLane, GL_STATIC_DRAW );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof( GLfloat ), ( GLvoid * ) 0 );
+    glEnableVertexAttribArray( 0 );
     
-    for(int i=0; i<4; i++) {
-        createObject(objects[i]);
-    }
+    GLuint verticalLane1BO, verticalLane1AO;
+    glGenVertexArrays( 1, &verticalLane1AO );
+    glGenBuffers( 1, &verticalLane1BO );
+    glBindVertexArray( verticalLane1AO );
+    glBindBuffer( GL_ARRAY_BUFFER, verticalLane1BO );
+    glBufferData( GL_ARRAY_BUFFER, sizeof( verticalLane1 ), verticalLane1, GL_STATIC_DRAW );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof( GLfloat ), ( GLvoid * ) 0 );
+    glEnableVertexAttribArray( 0 );
     
     glBindBuffer( GL_ARRAY_BUFFER, 0 ); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
     
@@ -203,21 +202,23 @@ int main()
         
         // Draw our first triangle
         glUseProgram( shaderProgram );
-        
-        for(int i=0; i<size; i++) {
-            glBindVertexArray( VAO[i] );
-            glDrawArrays( GL_TRIANGLES, 0, 3 );
-        }
+        glBindVertexArray( horizontalLaneAO );
+        glDrawArrays( GL_TRIANGLES, 0, 3 );
+        glBindVertexArray( horizontalLane1AO );
+        glDrawArrays( GL_TRIANGLES, 0, 3 );
+        glBindVertexArray( verticalLaneAO );
+        glDrawArrays( GL_TRIANGLES, 0, 3 );
+        glBindVertexArray( verticalLane1AO );
+        glDrawArrays( GL_TRIANGLES, 0, 3 );
+        glBindVertexArray( 0 );
         
         // Swap the screen buffers
         glfwSwapBuffers( window );
     }
     
     // Properly de-allocate all resources once they've outlived their purpose
-    for(int i=0; i<size; i++) {
-        glDeleteVertexArrays( 1, &VAO[i]);
-        glDeleteBuffers( 1, &VBO[i] );
-    }
+    glDeleteVertexArrays( 1, &horizontalLaneAO );
+    glDeleteBuffers( 1, &horizontalLaneBO );
     
     // Terminate GLFW, clearing any resources allocated by GLFW.
     glfwTerminate( );
@@ -225,3 +226,5 @@ int main()
     return 0;
 }
 
+
+*/
