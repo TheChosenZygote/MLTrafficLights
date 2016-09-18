@@ -247,18 +247,16 @@
      glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof( GLfloat ), ( GLvoid * ) 0 );
      glEnableVertexAttribArray( 0 );
     
-     GLfloat car[2][9] =
+     GLfloat car[18] =
      {
-         { // car1
-             -0.98f, 0.02f, 0.0f,
-             -0.98f, 0.198f, 0.0f,
-             -0.73f, 0.02f, 0.0f
-         },
-         {
-             -0.98f, 0.198f, 0.0f,
-             -0.73f, 0.198f, 0.0f,
-             -0.73f, 0.02f, 0.0f
-         },
+         // car1
+         -0.98f, 0.02f, 0.0f,
+         -0.98f, 0.198f, 0.0f,
+         -0.73f, 0.02f, 0.0f,
+         
+         -0.98f, 0.198f, 0.0f,
+         -0.73f, 0.198f, 0.0f,
+         -0.73f, 0.02f, 0.0f
 /**         { //car2
              0.98f, 0.02f, 0.0f,
              -0.98f, 0.198f, 0.0f,
@@ -338,9 +336,8 @@
          glBindVertexArray( carAO[i] );
          glBindBuffer( GL_ARRAY_BUFFER, carBO[i] );
          glBufferData( GL_ARRAY_BUFFER, sizeof( car[i] ), car, GL_STATIC_DRAW );
-         printf("%lu\n", sizeof(car[i]));
-         glVertexAttribPointer( 0 + (3*i), 3, GL_FLOAT, GL_FALSE, 3 * sizeof( GLfloat ), ( GLvoid * ) 0 );
-         glEnableVertexAttribArray( 0 + (3*i) );
+         glVertexAttribPointer( 0 , 3, GL_FLOAT, GL_FALSE, 3 * sizeof( GLfloat ), (GLvoid *) (0 + sizeof(car[i] * i)) );
+         glEnableVertexAttribArray( 0 );
      }
      
      glBindBuffer( GL_ARRAY_BUFFER, 0 ); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
@@ -370,10 +367,10 @@
          glDrawArrays( GL_TRIANGLES, 0, 3 );
          
          glUseProgram( shaderProgram1 );
-         //for(int i=0; i<2; i++) {
-             glBindVertexArray( carAO[1] );
+         for(int i=0; i<2; i++) {
+             glBindVertexArray( carAO[0] );
              glDrawArrays( GL_TRIANGLES, 0, 3 );
-         //}
+         }
          
          glBindVertexArray( 0 );
          
