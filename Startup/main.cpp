@@ -331,54 +331,84 @@
          }, */
      };
      
-     GLuint carBO[2], carAO[2];
-     for(int i=0; i<2; i++) {
-         glGenVertexArrays( 1, &carAO[i] );
-         glGenBuffers( 1, &carBO[i] );
-         glBindVertexArray( carAO[i] );
-         glBindBuffer( GL_ARRAY_BUFFER, carBO[i] );
-         glBufferData( GL_ARRAY_BUFFER, sizeof( car[i] ), car, GL_STATIC_DRAW );
-         printf("%lu\n", sizeof(car[i]));
-         glVertexAttribPointer( 0 + (3*i), 3, GL_FLOAT, GL_FALSE, 3 * sizeof( GLfloat ), ( GLvoid * ) 0 );
-         glEnableVertexAttribArray( 0 + (3*i) );
-     }
-     
      glBindBuffer( GL_ARRAY_BUFFER, 0 ); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
      
      glBindVertexArray( 0 ); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs)
      
      // Game loop
+
+     unsigned long the_time = 0;
      while ( !glfwWindowShouldClose( window ) )
-     {
-         // Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
-         glfwPollEvents( );
-         
-         // Render
-         // Clear the colorbuffer
-         glClearColor( 0.2f, 0.3f, 0.3f, 1.0f );
-         glClear( GL_COLOR_BUFFER_BIT );
-         
-         // Draw our first triangle
-         glUseProgram( shaderProgram );
-         glBindVertexArray( horizontalLaneAO );
-         glDrawArrays( GL_TRIANGLES, 0, 3 );
-         glBindVertexArray( horizontalLane1AO );
-         glDrawArrays( GL_TRIANGLES, 0, 3 );
-         glBindVertexArray( verticalLaneAO );
-         glDrawArrays( GL_TRIANGLES, 0, 3 );
-         glBindVertexArray( verticalLane1AO );
-         glDrawArrays( GL_TRIANGLES, 0, 3 );
-         
-         glUseProgram( shaderProgram1 );
-         //for(int i=0; i<2; i++) {
-             glBindVertexArray( carAO[1] );
-             glDrawArrays( GL_TRIANGLES, 0, 3 );
-         //}
+    {
+        // Check if any events have been activiated (key pressed, mouse moved etc.) and call corresponding response functions
+        glfwPollEvents( );
+
+        // Render
+        // Clear the colorbuffer
+        glClearColor( 0.2f, 0.3f, 0.3f, 1.0f );
+        glClear( GL_COLOR_BUFFER_BIT );
+
+        // Draw our first triangle
+        glUseProgram( shaderProgram );
+        glBindVertexArray( horizontalLaneAO );
+        glDrawArrays( GL_TRIANGLES, 0, 3 );
+        glBindVertexArray( horizontalLane1AO );
+        glDrawArrays( GL_TRIANGLES, 0, 3 );
+        glBindVertexArray( verticalLaneAO );
+        glDrawArrays( GL_TRIANGLES, 0, 3 );
+        glBindVertexArray( verticalLane1AO );
+        glDrawArrays( GL_TRIANGLES, 0, 3 );
+
+        // draw car
+        glUseProgram( shaderProgram1 );
+
+        // log the time
+        // !! inefficient
+        double the_time_2 = the_time / 1000.0;
+        std::cout << ( the_time_2 ) << std::endl;
+
+        // animate car
+        car[0][0] += the_time_2;
+        car[0][3] += the_time_2;
+        car[0][6] += the_time_2;
+
+        GLuint bmycar, mycar;
+        glGenVertexArrays( 1, &mycar );
+        glGenBuffers( 1, &bmycar );
+        glBindVertexArray( mycar );
+        glBindBuffer( GL_ARRAY_BUFFER, bmycar );
+        glBufferData( GL_ARRAY_BUFFER, sizeof( car ), car, GL_STATIC_DRAW );
+        glVertexAttribPointer( 0 , 3, GL_FLOAT, GL_FALSE, 3 * sizeof( GLfloat ), ( GLvoid * ) 0 );
+        glEnableVertexAttribArray( 0 );
+
+        glBindVertexArray( mycar );
+        glDrawArrays( GL_TRIANGLES, 0, 3 );
+
+         // GLuint carBO[2], carAO[2];
+         // for(int i=0; i<2; i++) {
+         //     glGenVertexArrays( 1, &carAO[i] );
+         //     glGenBuffers( 1, &carBO[i] );
+         //     glBindVertexArray( carAO[i] );
+         //     glBindBuffer( GL_ARRAY_BUFFER, carBO[i] );
+         //     glBufferData( GL_ARRAY_BUFFER, sizeof( car[i] ), car, GL_STATIC_DRAW );
+         //     printf("%lu\n", sizeof(car[i]));
+         //     glVertexAttribPointer( 0 + (3*i), 3, GL_FLOAT, GL_FALSE, 3 * sizeof( GLfloat ), ( GLvoid * ) 0 );
+         //     glEnableVertexAttribArray( 0 + (3*i) );
+         // }
+
+
+         // for(int i=0; i<2; i++) {
+         //     glBindVertexArray( carAO[ i ] );
+         //     glDrawArrays( GL_TRIANGLES, 0, 3 );
+         // }
          
          glBindVertexArray( 0 );
          
          // Swap the screen buffers
          glfwSwapBuffers( window );
+
+         // increase global time
+         the_time++;
      }
      
      // Properly de-allocate all resources once they've outlived their purpose
@@ -387,6 +417,6 @@
      
      // Terminate GLFW, clearing any resources allocated by GLFW.
      glfwTerminate( );
-     
+
      return 0;
  }
